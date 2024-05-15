@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerControllerX : MonoBehaviour
 {
@@ -19,20 +21,24 @@ public class PlayerControllerX : MonoBehaviour
     public AudioClip moneySound;
     public AudioClip explodeSound;
 
+    public GameObject restartGame;
 
 
-    void Start()
+
+    private void Start()
     {
+        restartGame.SetActive(false);
         Physics.gravity *= gravityModifier;
         playerAudio = GetComponent<AudioSource>();
         playerRb = GetComponent<Rigidbody>();
 
+        
         // Apply a small upward force at the start of the game
         playerRb.AddForce(Vector3.up * 5, ForceMode.Impulse);
 
     }
 
-    void Update()
+    private void Update()
     {
         // While space is pressed and player is low enough, float up
         if (Input.GetKey(KeyCode.Space) && !gameOver && transform.position.y < topLimit)
@@ -54,7 +60,7 @@ public class PlayerControllerX : MonoBehaviour
             explosionParticle.Play();
             playerAudio.PlayOneShot(explodeSound, 1.0f);
             gameOver = true;
-            Debug.Log("Game Over!");
+            restartGame.SetActive(true);
             Destroy(other.gameObject);
         }
 
@@ -74,5 +80,12 @@ public class PlayerControllerX : MonoBehaviour
         }
 
     }
+
+    public void RestartGame()
+    {
+        int currentSceneIndex = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(currentSceneIndex);   
+    }
+
 
 }
